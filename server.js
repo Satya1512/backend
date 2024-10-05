@@ -6,20 +6,9 @@ require('dotenv').config();
 const path = require('path');
 const app = express();
 
-// Serve static assets if in production
-if (process.env.NODE_ENV === 'production') {
-    // Set static folder
-    app.use(express.static('client/build'));
-
-    app.get('*', (req, res) => {
-        res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
-    });
-}
-
-
-// Middleware
+// Middleware - CORS and Body Parser
 app.use(cors({
-    origin: 'https://portfolio-frontend-ee6h.onrender.com', // Updated for React frontend on port 3000
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000', // Use env variable for flexibility
 }));
 app.use(bodyParser.json());
 
@@ -47,7 +36,7 @@ const Contact = mongoose.model('Contact', ContactSchema);
 app.post('/api/contact', async (req, res) => {
     try {
         const { name, email, message } = req.body;
-        
+
         // Create a new contact document
         const newContact = new Contact({
             name,
@@ -58,12 +47,21 @@ app.post('/api/contact', async (req, res) => {
         // Save the contact in the database
         await newContact.save();
 
-        res.status(201).json({ message: 'Contact farm submitted successfully' });
+        res.status(201).json({ message: 'Contact form submitted successfully' });
     } catch (error) {
         res.status(500).json({ message: 'Server error. Please try again later.' });
     }
 });
 
+// Serve static assets if in production
+if (process.env.NODE_ENV === 'production') {
+    // Set static folder
+    app.use(express.static('client/build'));
+
+    app.get('*', (req, res) => {
+        res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+    });
+}
 
 // Start the server
 const PORT = process.env.PORT || 3000;
