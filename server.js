@@ -19,7 +19,7 @@ if (process.env.NODE_ENV === 'production') {
 
 // Middleware
 app.use(cors({
-    origin: 'http://localhost:3000', // Updated for React frontend on port 3000
+    origin: 'https://portfolio-frontend-ee6h.onrender.com', // Updated for React frontend on port 3000
 }));
 app.use(bodyParser.json());
 
